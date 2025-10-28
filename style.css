@@ -6,8 +6,8 @@
 body{
   margin:0; font-family:system-ui,-apple-system,Segoe UI,Helvetica,Arial;
   background:linear-gradient(135deg,#0f172a 0%, #111827 60%, #0b1020 100%);
-  color:var(--text); height:100vh; display:flex; flex-direction:column; overflow:hidden;
-  position:relative; /* เพื่อให้ footer absolute อ้างอิงได้ */
+  color:var(--text); height:100dvh; display:flex; flex-direction:column; overflow:hidden;
+  position:relative;
 }
 header{padding:6px; text-align:center;}
 h1{margin:0 0 4px; font-size:1rem;}
@@ -61,7 +61,7 @@ h1{margin:0 0 4px; font-size:1rem;}
 footer{
   position:absolute;
   bottom:0; left:0; right:0;
-  background:rgba(11,19,36,0.8); /* โปร่งใสเล็กน้อย */
+  background:rgba(11,19,36,0.8);
   color:#94a3b8;
   text-align:center;
   padding:4px;
@@ -73,10 +73,10 @@ footer{
 @media (max-width: 600px) {
   .grid {
     grid-template-columns: repeat(3, 1fr);
-    height: 100vh; /* ใช้เต็มจอ */
+    height: 100dvh; /* ใช้ dynamic viewport */
   }
   .card {
     aspect-ratio: auto;
-    height: calc(100vh / 4); /* 4 แถวพอดี */
+    height: calc(100dvh / 4); /* 4 แถวพอดี */
   }
 }
