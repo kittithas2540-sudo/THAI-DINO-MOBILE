@@ -25,10 +25,13 @@ h1{margin:0 0 4px; font-size:1rem;}
 }
 .card{
   position:relative; perspective:1000px;
-  aspect-ratio: 4 / 3;
   cursor:pointer;
+  display:flex; /* ให้หดตามเนื้อหา */
 }
-.card-inner{position:absolute; inset:0; transition:transform .5s; transform-style:preserve-3d;}
+.card-inner{
+  width:100%; height:100%;
+  transition:transform .5s; transform-style:preserve-3d;
+}
 .card.flipped .card-inner{transform:rotateY(180deg);}
 .face{position:absolute; inset:0; backface-visibility:hidden; border-radius:10px; overflow:hidden;}
 .face.back{background:var(--card); display:flex; align-items:center; justify-content:center; font-size:2rem;}
@@ -37,18 +40,20 @@ h1{margin:0 0 4px; font-size:1rem;}
   background:var(--front);
   display:flex; flex-direction:column; justify-content:flex-start;
 }
-.thumb{flex:1; display:flex; align-items:center; justify-content:center; overflow:hidden;}
+.thumb{
+  flex:1 1 auto;
+  display:flex; align-items:center; justify-content:center;
+  overflow:hidden;
+}
 .thumb img{
-  width:100%; height:100%;
-  object-fit: contain;
+  width:100%; height:auto; /* สูงตามสัดส่วนรูป */
+  object-fit:contain;
   background-color:#000;
 }
 .caption{
   padding:4px; font-size:.75rem; text-align:center;
   background:rgba(0,0,0,.4); color:#fff;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
 .matched .face.front{outline:3px solid var(--win);}
 
@@ -69,14 +74,13 @@ footer{
   z-index:10;
 }
 
-/* ✅ มือถือแนวตั้ง: 3×4 พอดีจอ */
+/* ✅ มือถือแนวตั้ง: 3×4 */
 @media (max-width: 600px) {
   .grid {
     grid-template-columns: repeat(3, 1fr);
-    height: 100dvh;
+    align-content:start; /* ให้เรียงแถวขึ้นไป */
   }
   .card {
-    aspect-ratio: auto;
-    height: calc(100dvh / 4.3); /* ลดขนาดลงเล็กน้อย */
+    aspect-ratio:auto; /* ไม่บังคับสัดส่วน */
   }
 }
