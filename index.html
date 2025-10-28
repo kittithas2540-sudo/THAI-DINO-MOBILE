@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เกมจับคู่ไดโนเสาร์ไทย</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>เกมจับคู่ไดโนเสาร์ไทย</h1>
+    <p class="sub">จับคู่ไดโนเสาร์สายพันธุ์ไทย 6 คู่ พร้อมความรู้สั้น ๆ</p>
+    <div class="toolbar">
+      <button id="btnRestart" class="btn">เริ่มใหม่</button>
+      <div class="panel">
+        <div class="badge">เวลา: <strong id="time">00:00</strong></div>
+        <div class="badge">คู่ที่จับแล้ว: <strong id="pairs">0/6</strong></div>
+        <div class="badge">พลิกการ์ด: <strong id="flips">0</strong></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="grid" id="grid"></main>
+
+  <!-- ป๊อปอัพ -->
+  <div class="popup" id="popup">
+    <div class="popup-card">
+      <img id="popup-img" alt="" />
+      <h2 class="popup-title" id="popup-title"></h2>
+      <p id="popup-text"></p>
+      <button class="btn" id="btnClose">ปิด</button>
+    </div>
+  </div>
+
+  <footer>
+    ข้อมูลไดโนเสาร์ไทยอ้างอิงจากเอกสารเผยแพร่ของ <strong>กรมทรัพยากรธรณี</strong> กระทรวงทรัพยากรธรรมชาติและสิ่งแวดล้อม<br>
+    ภาพประกอบใช้เพื่อการศึกษาและสื่อสารวิทยาศาสตร์เท่านั้น
+  </footer>
+
+  <!-- เสียง -->
+  <audio id="sfxFlip" src="sounds/flip.mp3" preload="auto"></audio>
+  <audio id="sfxMatch" src="sounds/match.mp3" preload="auto"></audio>
+  <audio id="sfxMiss" src="sounds/miss.mp3" preload="auto"></audio>
+  <audio id="sfxWin" src="sounds/win.mp3" preload="auto"></audio>
+
+  <script src="script.js"></script>
+</body>
+</html>
