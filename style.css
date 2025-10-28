@@ -74,7 +74,7 @@ footer{
   z-index:10;
 }
 
-/* ✅ มือถือแนวตั้ง: 3×4 + auto scale */
+/* ✅ มือถือแนวตั้ง: 3×4 + responsive */
 @media (max-width: 600px) {
   .grid {
     grid-template-columns: repeat(3, 1fr);
@@ -84,10 +84,12 @@ footer{
     aspect-ratio:auto;
   }
   .thumb img {
-    max-height: 60px; /* จำกัดความสูงรูป */
+    /* รูปจะมีความสูงระหว่าง 40px–80px ปรับตามจอ */
+    max-height: clamp(40px, 12vw, 80px);
   }
   .caption {
-    font-size: .65rem; /* ย่อฟอนต์ลง */
+    /* ฟอนต์จะเล็กลงอัตโนมัติ แต่ไม่เล็กเกินไป */
+    font-size: clamp(.55rem, 2.5vw, .7rem);
     padding: 2px;
   }
 }
