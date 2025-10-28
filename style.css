@@ -73,10 +73,10 @@ footer{
 @media (max-width: 600px) {
   .grid {
     grid-template-columns: repeat(3, 1fr);
-    height: 100dvh; /* ใช้ dynamic viewport */
+    height: 100dvh;
   }
   .card {
     aspect-ratio: auto;
-    height: calc(100dvh / 4); /* 4 แถวพอดี */
+    height: calc(100dvh / 4.3); /* ลดขนาดลงเล็กน้อย */
   }
 }
