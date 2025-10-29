@@ -19,15 +19,17 @@ h1{margin:0 0 4px; font-size:1rem;}
 .badge{background:#0b1324; border:1px solid #223; border-radius:6px; padding:4px 6px;}
 .badge strong{color:var(--accent);}
 
+/* ✅ ปรับ grid ให้เป็น 4×3 เสมอ */
 .grid{
   flex:1; display:grid; gap:6px; padding:6px;
   grid-template-columns:repeat(4,1fr);
-  overflow:hidden;
+  grid-auto-rows:1fr;
 }
 .card{
   position:relative; perspective:1000px;
-  aspect-ratio: 4 / 3;
+  aspect-ratio:3/4; /* ✅ การ์ดเล็กลง */
   cursor:pointer;
+  max-height:140px; /* ✅ จำกัดความสูง */
 }
 .card-inner{position:absolute; inset:0; transition:transform .5s; transform-style:preserve-3d;}
 .card.flipped .card-inner{transform:rotateY(180deg);}
@@ -40,7 +42,7 @@ h1{margin:0 0 4px; font-size:1rem;}
 }
 .thumb{flex:1; display:flex; align-items:center; justify-content:center; overflow:hidden;}
 .thumb img{width:100%; height:100%; object-fit: contain; background-color:#000;}
-.caption{padding:4px; font-size:.75rem; text-align:center; background:rgba(0,0,0,.4); color:#fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+.caption{padding:4px; font-size:.7rem; text-align:center; background:rgba(0,0,0,.4); color:#fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
 .matched .face.front{outline:3px solid var(--win);}
 
 .popup{position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,.6); visibility:hidden; opacity:0; transition:.3s;}
@@ -56,7 +58,12 @@ h1{margin:0 0 4px; font-size:1rem;}
 
 footer{position:absolute; bottom:0; left:0; right:0; background:rgba(11,19,36,0.8); color:#94a3b8; text-align:center; padding:4px; font-size:.65rem; z-index:10;}
 
+/* ✅ มือถือก็ยังคง 4×3 */
 @media (max-width: 600px) {
-  .grid {grid-template-columns: repeat(3, 1fr); height: 100vh;}
-  .card {aspect-ratio: auto; height: calc(100vh / 4);}
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .card {
+    max-height: 100px; /* การ์ดเล็กลงอีกสำหรับจอเล็ก */
+  }
 }
