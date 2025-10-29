@@ -1,4 +1,9 @@
 // =====================
+// ตั้งค่า API URL ของ Google Apps Script
+// =====================
+const API_URL = "YOUR_SCRIPT_URL"; // 👉 ใส่ URL ที่ได้จากการ Deploy Apps Script
+
+// =====================
 // ข้อมูลไดโนเสาร์
 // =====================
 const dinos = [
@@ -139,7 +144,6 @@ function onFlip(el,card){
     const [A,B]=state.flipped;
 
     if(A.card.nameTH===B.card.nameTH){
-      // ถูกคู่
       sfxMatch.currentTime=0; sfxMatch.play();
       A.el.classList.add("matched");
       B.el.classList.add("matched");
@@ -147,18 +151,15 @@ function onFlip(el,card){
       state.pairs++;
       pairsEl.textContent = `${state.pairs}/6`;
 
-      // แสดงความรู้สั้น ๆ
       showInfoPopup(A.card);
 
       state.flipped=[];
       state.locked=false;
 
-      // ชนะ
       if(state.pairs===6){
         onWin();
       }
     }else{
-      // ผิดคู่
       sfxMiss.currentTime=0; sfxMiss.play();
       setTimeout(()=>{
         A.el.classList.remove("flipped");
@@ -180,9 +181,8 @@ function showInfoPopup(card){
   popupImg.alt=card.nameTH;
   popupSummary.textContent="";
   popup.classList.add("active");
-  stopTimer(); // หยุดเวลาเพื่ออ่าน
+  stopTimer();
 }
-
 btnClose.addEventListener("click",()=>{
   popup.classList.remove("active");
   if(state.pairs<6) startTimer();
@@ -190,42 +190,42 @@ btnClose.addEventListener("click",()=>{
 
 function onWin(){
   stopTimer();
-  setTimeout(()=>{
+  setTimeout(async ()=>{
     sfxWin.play();
     const durationSec = Math.floor(state.elapsed/1000);
 
-    // บันทึกคะแนน
-    saveScore(playerName || "ผู้เล่นไม่ระบุ", durationSec, state.flips);
+    await saveScore(playerName || "ผู้เล่นไม่ระบุ", durationSec, state.flips);
+    await renderLeaderboard();
 
-    // อัปเดต Leaderboard และเปิด popup Leaderboard
-    renderLeaderboard();
     leaderboardPopup.classList.add("active");
   },400);
 }
 
 // =====================
-// Leaderboard
+// Leaderboard (Google Sheets API)
 // =====================
-function saveScore(name, time, flips){
-  let scores = JSON.parse(localStorage.getItem("dinoScores") || "[]");
-  scores.push({name, time, flips, ts: Date.now()});
-  localStorage.setItem("dinoScores", JSON.stringify(scores));
+async function saveScore(name, time, flips){
+  await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({name, time, flips}),
+    headers: {"Content-Type":"application/json"}
+  });
 }
 
-function renderLeaderboard(){
-  let scores = JSON.parse(localStorage.getItem("dinoScores") || "[]");
+async function renderLeaderboard(){
+  const res = await fetch(API_URL);
+  const scores = await res.json();
 
   if(sortMode==="time"){
-    scores.sort((a,b)=> a.time - b.time || a.flips - b.flips || a.ts - b.ts);
+    scores.sort((a,b)=>a.time-b.time || a.flips-b.flips);
   }else{
-    scores.sort((a,b)=> a.flips - b.flips || a.time - b.time || a.ts - b.ts);
+    scores.sort((a,b)=>a.flips-b.flips || a.time-b.time);
   }
 
-  const top = scores.slice(0, 100); // แสดงได้เยอะ เลื่อนอ่านได้
-  leaderboardList.innerHTML = "";
-  top.forEach((s,i)=>{
-    const li = document.createElement("li");
-    li.textContent = `${i+1}. ${s.name} — เวลา ${s.time} วิ, พลิก ${s.flips} ครั้ง`;
+  leaderboardList.innerHTML="";
+  scores.slice(0,50).forEach((s,i)=>{
+    const li=document.createElement("li");
+    li.textContent=`${i+1}. ${s.name} — เวลา ${s.time} วิ, พลิก ${s.flips} ครั้ง`;
     leaderboardList.appendChild(li);
   });
 
@@ -233,53 +233,12 @@ function renderLeaderboard(){
   btnSortFlips.classList.toggle("active", sortMode==="flips");
 }
 
-btnSortTime.addEventListener("click",()=>{
-  sortMode="time";
-  renderLeaderboard();
-});
-btnSortFlips.addEventListener("click",()=>{
-  sortMode="flips";
-  renderLeaderboard();
-});
-
-btnCloseLeaderboard.addEventListener("click",()=>{
-  leaderboardPopup.classList.remove("active");
-});
-
-btnRestartPopup.addEventListener("click",()=>{
-  leaderboardPopup.classList.remove("active");
-  restart();
-});
+btnSortTime.addEventListener("click",()=>{ sortMode="time"; renderLeaderboard(); });
+btnSortFlips.addEventListener("click",()=>{ sortMode="flips"; renderLeaderboard(); });
+btnCloseLeaderboard.addEventListener("click",()=>{ leaderboardPopup.classList.remove("active"); });
+btnRestartPopup.addEventListener("click",()=>{ leaderboardPopup.classList.remove("active"); restart(); });
 
 // =====================
 // Start / Restart
 // =====================
-btnStart.addEventListener("click", ()=>{
-  playerName = (inputName.value || "").trim() || "ผู้เล่นไม่ระบุ";
-  restart();
-});
-
-function restart(){
-  stopTimer();
-  state = {
-    shuffled: shuffle(deck),
-    flipped: [],
-    locked: false,
-    pairs: 0,
-    flips: 0,
-    startAt: null,
-    timer: null,
-    elapsed: 0
-  };
-  timeEl.textContent="00:00";
-  pairsEl.textContent="0/6";
-  flipsEl.textContent="0";
-  render();
-  startTimer();
-}
-
-// =====================
-// Init
-// =====================
-renderLeaderboard();
-// ไม่เริ่มเกมอัตโนมัติ เพื่อให้กรอกชื่อและกด "เริ่มเกม" ก่อน
+btnStart.add
