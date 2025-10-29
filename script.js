@@ -1,7 +1,7 @@
 // =====================
 // ตั้งค่า API URL ของ Google Apps Script
 // =====================
-const API_URL = "https://script.google.com/macros/s/AKfycbyKNe76esQBYyaJ0kFAkq1QjgOyoWEbDEYoIDJuBQVfUJSxUnjJ_Yxmi3Pb9RWQeOjEtw/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbx2MCOFO_v0dBNXPOsP_Wewc8Q8C1m8Zb3A2gTYUl5xlFMHrFcsIhyLkbR3t_KtEXD2w/exec";
 
 // =====================
 // ข้อมูลไดโนเสาร์
@@ -94,21 +94,21 @@ function onFlip(el,card){
   if(state.locked) return;
   if(el.classList.contains("flipped")) return;
   el.classList.add("flipped");
-  sfxFlip.currentTime=0; sfxFlip.play();
+  if(sfxFlip){ sfxFlip.currentTime=0; sfxFlip.play(); }
   state.flips++; flipsEl.textContent=state.flips;
   state.flipped.push({el,card});
   if(state.flipped.length===2){
     state.locked=true;
     const [A,B]=state.flipped;
     if(A.card.nameTH===B.card.nameTH){
-      sfxMatch.currentTime=0; sfxMatch.play();
+      if(sfxMatch){ sfxMatch.currentTime=0; sfxMatch.play(); }
       A.el.classList.add("matched"); B.el.classList.add("matched");
       state.pairs++; pairsEl.textContent=`${state.pairs}/6`;
       showInfoPopup(A.card);
       state.flipped=[]; state.locked=false;
       if(state.pairs===6){ onWin(); }
     }else{
-      sfxMiss.currentTime=0; sfxMiss.play();
+      if(sfxMiss){ sfxMiss.currentTime=0; sfxMiss.play(); }
       setTimeout(()=>{ A.el.classList.remove("flipped"); B.el.classList.remove("flipped"); state.flipped=[]; state.locked=false; },800);
     }
   }
@@ -130,7 +130,7 @@ btnClose.addEventListener("click",()=>{ popup.classList.remove("active"); if(sta
 function onWin(){
   stopTimer();
   setTimeout(async ()=>{
-    sfxWin.play();
+    if(sfxWin) sfxWin.play();
     const durationSec=Math.floor(state.elapsed/1000);
     await saveScore(playerName||"ผู้เล่นไม่ระบุ", durationSec, state.flips);
     await renderLeaderboard();
@@ -142,7 +142,11 @@ function onWin(){
 // Leaderboard (Google Sheets API)
 // =====================
 async function saveScore(name,time,flips){
-  await fetch(API_URL,{ method:"POST", body:JSON.stringify({name,time,flips}), headers:{"Content-Type":"application/json"} });
+  await fetch(API_URL,{
+    method:"POST",
+    body:JSON.stringify({name,time,flips}),
+    headers:{"Content-Type":"application/json"}
+  });
 }
 async function renderLeaderboard(){
   const res=await fetch(API_URL);
@@ -150,20 +154,29 @@ async function renderLeaderboard(){
   if(sortMode==="time"){ scores.sort((a,b)=>a.time-b.time||a.flips-b.flips); }
   else{ scores.sort((a,b)=>a.flips-b.flips||a.time-b.time); }
   leaderboardList.innerHTML="";
-  scores.slice(0,50).forEach((s,i)=>{ const li=document.createElement("li"); li.textContent=`${i+1}. ${s.name} — เวลา ${s.time} วิ, พลิก ${s.flips} ครั้ง`; leaderboardList.appendChild(li); });
+  scores.slice(0,50).forEach((s,i)=>{
+    const li=document.createElement("li");
+    li.textContent=`${i+1}. ${s.name} — เวลา ${s.time} วิ, พลิก ${s.flips} ครั้ง`;
+    leaderboardList.appendChild(li);
+  });
   btnSortTime.classList.toggle("active",sortMode==="time");
   btnSortFlips.classList.toggle("active",sortMode==="flips");
 }
 btnSortTime.addEventListener("click",()=>{ sortMode="time"; renderLeaderboard(); });
 btnSortFlips.addEventListener("click",()=>{ sortMode="flips"; renderLeaderboard(); });
-btnCloseLeaderboard.addEventListener("click",()=>{ leaderboardPopup.classList.remove("active"); });
-btnRestartPopup.addEventListener("click",()=>{ leaderboardPopup.classList.remove("active"); restart(); });
+btnCloseLeaderboard.addEventListener("click",()=>{
+  leaderboardPopup.classList.remove("active");
+});
+btnRestartPopup.addEventListener("click",()=>{
+  leaderboardPopup.classList.remove("active");
+  restart();
+});
 
 // =====================
 // Start / Restart
 // =====================
 btnStart.addEventListener("click", ()=>{
- playerName = (inputName.value || "").trim() || "ผู้เล่นไม่ระบุ";
+  playerName = (inputName.value || "").trim() || "ผู้เล่นไม่ระบุ";
   restart();
 });
 
@@ -190,7 +203,3 @@ function restart(){
 // Init
 // =====================
 renderLeaderboard();
-
-
-
-
