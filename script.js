@@ -1,7 +1,7 @@
 // =====================
 // ตั้งค่า API URL ของ Google Apps Script
 // =====================
-const API_URL = "YOUR_SCRIPT_URL"; // 👉 ใส่ URL ที่ได้จากการ Deploy Apps Script
+const API_URL = "https://script.google.com/macros/s/AKfycbx2MCOFO_v0dBNXPOsP_Wewc8Q8C1m8Zb3A2gTYUl5xlFMHrFcsIhyLkbR3t_KtEXD2w/exec";
 
 // =====================
 // ข้อมูลไดโนเสาร์
@@ -19,7 +19,7 @@ const dinos = [
 const deck = dinos.flatMap((d,i)=>[{id:i+"A",...d},{id:i+"B",...d}]);
 
 // =====================
-// DOM
+// DOM อ้างอิง
 // =====================
 const grid = document.getElementById("grid");
 const timeEl = document.getElementById("time");
@@ -51,41 +51,19 @@ const sfxMiss = document.getElementById("sfxMiss");
 const sfxWin = document.getElementById("sfxWin");
 
 // =====================
-// สถานะ
+// สถานะเกม
 // =====================
 let state = {};
 let playerName = "";
 let sortMode = "time"; // time | flips
 
 // =====================
-// Utils
+// Utilities
 // =====================
-function shuffle(a){
-  const arr=[...a];
-  for(let i=arr.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [arr[i],arr[j]]=[arr[j],arr[i]];
-  }
-  return arr;
-}
-function formatTime(ms){
-  const s=Math.floor(ms/1000);
-  const mm=String(Math.floor(s/60)).padStart(2,"0");
-  const ss=String(s%60).padStart(2,"0");
-  return `${mm}:${ss}`;
-}
-function startTimer(){
-  if(state.timer) return;
-  state.startAt=Date.now() - (state.elapsed||0);
-  state.timer=setInterval(()=>{
-    state.elapsed = Date.now()-state.startAt;
-    timeEl.textContent = formatTime(state.elapsed);
-  },200);
-}
-function stopTimer(){
-  clearInterval(state.timer);
-  state.timer=null;
-}
+function shuffle(a){ const arr=[...a]; for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+function formatTime(ms){ const s=Math.floor(ms/1000); const mm=String(Math.floor(s/60)).padStart(2,"0"); const ss=String(s%60).padStart(2,"0"); return `${mm}:${ss}`; }
+function startTimer(){ if(state.timer) return; state.startAt=Date.now()-(state.elapsed||0); state.timer=setInterval(()=>{ state.elapsed=Date.now()-state.startAt; timeEl.textContent=formatTime(state.elapsed); },200); }
+function stopTimer(){ clearInterval(state.timer); state.timer=null; }
 
 // =====================
 // Render การ์ด
@@ -96,31 +74,14 @@ function render(){
     const el=document.createElement("div");
     el.className="card";
     el.dataset.key=card.id;
-
-    const inner=document.createElement("div");
-    inner.className="card-inner";
-
-    const back=document.createElement("div");
-    back.className="face back";
-    back.textContent="🦖";
-
-    const front=document.createElement("div");
-    front.className="face front";
-    const thumb=document.createElement("div");
-    thumb.className="thumb";
-    const img=document.createElement("img");
-    img.src=card.img; img.alt=card.nameTH;
-    thumb.appendChild(img);
-    const cap=document.createElement("div");
-    cap.className="caption";
-    cap.textContent=card.nameTH;
-    front.appendChild(thumb);
-    front.appendChild(cap);
-
-    inner.appendChild(back);
-    inner.appendChild(front);
-    el.appendChild(inner);
-
+    const inner=document.createElement("div"); inner.className="card-inner";
+    const back=document.createElement("div"); back.className="face back"; back.textContent="🦖";
+    const front=document.createElement("div"); front.className="face front";
+    const thumb=document.createElement("div"); thumb.className="thumb";
+    const img=document.createElement("img"); img.src=card.img; img.alt=card.nameTH; thumb.appendChild(img);
+    const cap=document.createElement("div"); cap.className="caption"; cap.textContent=card.nameTH;
+    front.appendChild(thumb); front.appendChild(cap);
+    inner.appendChild(back); inner.appendChild(front); el.appendChild(inner);
     el.addEventListener("click",()=>onFlip(el,card));
     grid.appendChild(el);
   });
@@ -132,41 +93,23 @@ function render(){
 function onFlip(el,card){
   if(state.locked) return;
   if(el.classList.contains("flipped")) return;
-
   el.classList.add("flipped");
   sfxFlip.currentTime=0; sfxFlip.play();
   state.flips++; flipsEl.textContent=state.flips;
-
   state.flipped.push({el,card});
-
   if(state.flipped.length===2){
     state.locked=true;
     const [A,B]=state.flipped;
-
     if(A.card.nameTH===B.card.nameTH){
       sfxMatch.currentTime=0; sfxMatch.play();
-      A.el.classList.add("matched");
-      B.el.classList.add("matched");
-
-      state.pairs++;
-      pairsEl.textContent = `${state.pairs}/6`;
-
+      A.el.classList.add("matched"); B.el.classList.add("matched");
+      state.pairs++; pairsEl.textContent=`${state.pairs}/6`;
       showInfoPopup(A.card);
-
-      state.flipped=[];
-      state.locked=false;
-
-      if(state.pairs===6){
-        onWin();
-      }
+      state.flipped=[]; state.locked=false;
+      if(state.pairs===6){ onWin(); }
     }else{
       sfxMiss.currentTime=0; sfxMiss.play();
-      setTimeout(()=>{
-        A.el.classList.remove("flipped");
-        B.el.classList.remove("flipped");
-        state.flipped=[];
-        state.locked=false;
-      },800);
+      setTimeout(()=>{ A.el.classList.remove("flipped"); B.el.classList.remove("flipped"); state.flipped=[]; state.locked=false; },800);
     }
   }
 }
@@ -177,26 +120,20 @@ function onFlip(el,card){
 function showInfoPopup(card){
   popupTitle.textContent=card.nameTH;
   popupText.textContent=card.info;
-  popupImg.src=card.img;
-  popupImg.alt=card.nameTH;
+  popupImg.src=card.img; popupImg.alt=card.nameTH;
   popupSummary.textContent="";
   popup.classList.add("active");
   stopTimer();
 }
-btnClose.addEventListener("click",()=>{
-  popup.classList.remove("active");
-  if(state.pairs<6) startTimer();
-});
+btnClose.addEventListener("click",()=>{ popup.classList.remove("active"); if(state.pairs<6) startTimer(); });
 
 function onWin(){
   stopTimer();
   setTimeout(async ()=>{
     sfxWin.play();
-    const durationSec = Math.floor(state.elapsed/1000);
-
-    await saveScore(playerName || "ผู้เล่นไม่ระบุ", durationSec, state.flips);
+    const durationSec=Math.floor(state.elapsed/1000);
+    await saveScore(playerName||"ผู้เล่นไม่ระบุ", durationSec, state.flips);
     await renderLeaderboard();
-
     leaderboardPopup.classList.add("active");
   },400);
 }
@@ -204,35 +141,19 @@ function onWin(){
 // =====================
 // Leaderboard (Google Sheets API)
 // =====================
-async function saveScore(name, time, flips){
-  await fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify({name, time, flips}),
-    headers: {"Content-Type":"application/json"}
-  });
+async function saveScore(name,time,flips){
+  await fetch(API_URL,{ method:"POST", body:JSON.stringify({name,time,flips}), headers:{"Content-Type":"application/json"} });
 }
-
 async function renderLeaderboard(){
-  const res = await fetch(API_URL);
-  const scores = await res.json();
-
-  if(sortMode==="time"){
-    scores.sort((a,b)=>a.time-b.time || a.flips-b.flips);
-  }else{
-    scores.sort((a,b)=>a.flips-b.flips || a.time-b.time);
-  }
-
+  const res=await fetch(API_URL);
+  const scores=await res.json();
+  if(sortMode==="time"){ scores.sort((a,b)=>a.time-b.time||a.flips-b.flips); }
+  else{ scores.sort((a,b)=>a.flips-b.flips||a.time-b.time); }
   leaderboardList.innerHTML="";
-  scores.slice(0,50).forEach((s,i)=>{
-    const li=document.createElement("li");
-    li.textContent=`${i+1}. ${s.name} — เวลา ${s.time} วิ, พลิก ${s.flips} ครั้ง`;
-    leaderboardList.appendChild(li);
-  });
-
-  btnSortTime.classList.toggle("active", sortMode==="time");
-  btnSortFlips.classList.toggle("active", sortMode==="flips");
+  scores.slice(0,50).forEach((s,i)=>{ const li=document.createElement("li"); li.textContent=`${i+1}. ${s.name} — เวลา ${s.time} วิ, พลิก ${s.flips} ครั้ง`; leaderboardList.appendChild(li); });
+  btnSortTime.classList.toggle("active",sortMode==="time");
+  btnSortFlips.classList.toggle("active",sortMode==="flips");
 }
-
 btnSortTime.addEventListener("click",()=>{ sortMode="time"; renderLeaderboard(); });
 btnSortFlips.addEventListener("click",()=>{ sortMode="flips"; renderLeaderboard(); });
 btnCloseLeaderboard.addEventListener("click",()=>{ leaderboardPopup.classList.remove("active"); });
