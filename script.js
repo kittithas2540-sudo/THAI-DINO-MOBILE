@@ -1,9 +1,4 @@
 // =====================
-// ตั้งค่า API URL ของ Google Apps Script
-// =====================
-const API_URL = "https://script.google.com/macros/s/AKfycbx2MCOFO_v0dBNXPOsP_Wewc8Q8C1m8Zb3A2gTYUl5xlFMHrFcsIhyLkbR3t_KtEXD2w/exec";
-
-// =====================
 // ข้อมูลไดโนเสาร์
 // =====================
 const dinos = [
@@ -36,14 +31,6 @@ const btnClose = document.getElementById("btnClose");
 const inputName = document.getElementById("playerName");
 const btnStart = document.getElementById("btnStart");
 
-// Leaderboard popup
-const leaderboardPopup = document.getElementById("leaderboard-popup");
-const leaderboardList = document.getElementById("leaderboard-list");
-const btnRestartPopup = document.getElementById("btnRestartPopup");
-const btnCloseLeaderboard = document.getElementById("btnCloseLeaderboard");
-const btnSortTime = document.getElementById("sortTime");
-const btnSortFlips = document.getElementById("sortFlips");
-
 // เสียง
 const sfxFlip = document.getElementById("sfxFlip");
 const sfxMatch = document.getElementById("sfxMatch");
@@ -55,7 +42,6 @@ const sfxWin = document.getElementById("sfxWin");
 // =====================
 let state = {};
 let playerName = "";
-let sortMode = "time"; // time | flips
 
 // =====================
 // Utilities
@@ -129,48 +115,12 @@ btnClose.addEventListener("click",()=>{ popup.classList.remove("active"); if(sta
 
 function onWin(){
   stopTimer();
-  setTimeout(async ()=>{
+  setTimeout(()=>{
     if(sfxWin) sfxWin.play();
-    const durationSec=Math.floor(state.elapsed/1000);
-    await saveScore(playerName||"ผู้เล่นไม่ระบุ", durationSec, state.flips);
-    await renderLeaderboard();
-    leaderboardPopup.classList.add("active");
+    alert(`🎉 ชนะแล้ว! ${playerName||"ผู้เล่น"} ใช้เวลา ${formatTime(state.elapsed)} พลิก ${state.flips} ครั้ง`);
+    restart();
   },400);
 }
-
-// =====================
-// Leaderboard (Google Sheets API)
-// =====================
-async function saveScore(name,time,flips){
-  await fetch(API_URL,{
-    method:"POST",
-    body:JSON.stringify({name,time,flips}),
-    headers:{"Content-Type":"application/json"}
-  });
-}
-async function renderLeaderboard(){
-  const res=await fetch(API_URL);
-  const scores=await res.json();
-  if(sortMode==="time"){ scores.sort((a,b)=>a.time-b.time||a.flips-b.flips); }
-  else{ scores.sort((a,b)=>a.flips-b.flips||a.time-b.time); }
-  leaderboardList.innerHTML="";
-  scores.slice(0,50).forEach((s,i)=>{
-    const li=document.createElement("li");
-    li.textContent=`${i+1}. ${s.name} — เวลา ${s.time} วิ, พลิก ${s.flips} ครั้ง`;
-    leaderboardList.appendChild(li);
-  });
-  btnSortTime.classList.toggle("active",sortMode==="time");
-  btnSortFlips.classList.toggle("active",sortMode==="flips");
-}
-btnSortTime.addEventListener("click",()=>{ sortMode="time"; renderLeaderboard(); });
-btnSortFlips.addEventListener("click",()=>{ sortMode="flips"; renderLeaderboard(); });
-btnCloseLeaderboard.addEventListener("click",()=>{
-  leaderboardPopup.classList.remove("active");
-});
-btnRestartPopup.addEventListener("click",()=>{
-  leaderboardPopup.classList.remove("active");
-  restart();
-});
 
 // =====================
 // Start / Restart
@@ -198,8 +148,3 @@ function restart(){
   render();
   startTimer();
 }
-
-// =====================
-// Init
-// =====================
-renderLeaderboard();
