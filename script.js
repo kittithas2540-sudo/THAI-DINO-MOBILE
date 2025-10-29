@@ -162,4 +162,33 @@ btnRestartPopup.addEventListener("click",()=>{ leaderboardPopup.classList.remove
 // =====================
 // Start / Restart
 // =====================
-btnStart.add
+btnStart.addEventListener("click", ()=>{
+ playerName = (inputName.value || "").trim() || "ผู้เล่นไม่ระบุ";
+  restart();
+});
+
+function restart(){
+  stopTimer();
+  state = {
+    shuffled: shuffle(deck),
+    flipped: [],
+    locked: false,
+    pairs: 0,
+    flips: 0,
+    startAt: null,
+    timer: null,
+    elapsed: 0
+  };
+  timeEl.textContent="00:00";
+  pairsEl.textContent="0/6";
+  flipsEl.textContent="0";
+  render();
+  startTimer();
+}
+
+// =====================
+// Init
+// =====================
+renderLeaderboard();
+
+
