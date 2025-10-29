@@ -1,7 +1,7 @@
 // =====================
 // ตั้งค่า API URL ของ Google Apps Script
 // =====================
-const API_URL = "https://script.google.com/macros/s/AKfycbx2MCOFO_v0dBNXPOsP_Wewc8Q8C1m8Zb3A2gTYUl5xlFMHrFcsIhyLkbR3t_KtEXD2w/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzBIkpqBNQhoBB3AtQEC66Rtpj-GDdLRcgsVLeKyvJmnm-6nhz_eD4CP4zAThRffXPH1Q/exec";
 
 // =====================
 // ข้อมูลไดโนเสาร์
@@ -190,5 +190,6 @@ function restart(){
 // Init
 // =====================
 renderLeaderboard();
+
 
 
