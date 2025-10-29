@@ -2,57 +2,67 @@
 <html lang="th">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>เกมจับคู่ไดโนเสาร์ไทย</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>เกมจับคู่ไดโนเสาร์</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <h1>เกมจับคู่ไดโนเสาร์ไทย</h1>
-    <p class="sub">มารู้จักและจับคู่ไดโนเสาร์พันธุ์ไทยกันเถอะ ถ้าพร้อมแล้วใส่ชื่อ แล้วกดเริ่มกันเลย </p>
-    <div class="toolbar">
-      <input id="playerName" type="text" placeholder="กรอกชื่อผู้เล่น" />
-      <button id="btnStart" class="btn">เริ่มเกม</button>
-      <div class="panel">
-        <div class="badge">เวลา: <strong id="time">00:00</strong></div>
-        <div class="badge">คู่ที่จับแล้ว: <strong id="pairs">0/6</strong></div>
-        <div class="badge">พลิกการ์ด: <strong id="flips">0</strong></div>
-      </div>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">🦖</span>
+      <h1>เกมจับคู่ไดโนเสาร์</h1>
+    </div>
+    <div class="controls">
+      <label class="name-field">
+        <span>ชื่อผู้เล่น:</span>
+        <input id="playerName" type="text" placeholder="เช่น เด็กดีไดโน" />
+      </label>
+      <button id="btnStart" class="primary">เริ่มเกม</button>
     </div>
   </header>
 
-  <main class="grid" id="grid"></main>
+  <main class="layout">
+    <section class="hud">
+      <div class="stat"><strong>เวลา:</strong> <span id="time">00:00</span></div>
+      <div class="stat"><strong>คู่ที่จับได้:</strong> <span id="pairs">0/6</span></div>
+      <div class="stat"><strong>ครั้งที่พลิก:</strong> <span id="flips">0</span></div>
+    </section>
 
-  <!-- Popup ข้อมูลไดโนเสาร์ -->
-  <div class="popup" id="popup">
-    <div class="popup-card">
+    <section class="game">
+      <div id="grid" class="grid" aria-label="ตารางการ์ดจับคู่"></div>
+    </section>
+  </main>
+
+  <!-- Info popup (แสดงเมื่อจับคู่ถูก) -->
+  <div id="popup" class="popup" role="dialog" aria-modal="true" aria-labelledby="popup-title" aria-describedby="popup-text">
+    <div class="popup-box">
       <img id="popup-img" alt="" />
-      <h2 class="popup-title" id="popup-title"></h2>
-      <p id="popup-text"></p>
-      <div id="popup-summary"></div>
-      <button class="btn" id="btnClose">ปิด</button>
-    </div>
-  </div>
-
-  <!-- Popup Leaderboard -->
-  <div class="popup" id="leaderboard-popup">
-    <div class="popup-card">
-      <h2>🏆 Leaderboard</h2>
-      <div class="toolbar">
-        <button id="sortTime" class="btn active">เรียงตามเวลา</button>
-        <button id="sortFlips" class="btn">เรียงตามจำนวนครั้ง</button>
+      <div class="popup-body">
+        <h2 id="popup-title">ชื่อไดโนเสาร์</h2>
+        <p id="popup-text">ข้อมูลสั้น ๆ ของไดโนเสาร์ตัวนี้</p>
+        <p id="popup-summary" class="muted"></p>
+        <div class="popup-actions">
+          <button id="btnClose" class="primary">ปิดและเล่นต่อ</button>
+        </div>
       </div>
-      <ol id="leaderboard-list"></ol>
-      <button class="btn" id="btnRestartPopup">เล่นใหม่</button>
-      <button class="btn" id="btnCloseLeaderboard">ปิด</button>
     </div>
   </div>
 
-  <footer>
-    ที่มา <strong>กรมทรัพยากรธรณี</strong> กระทรวงทรัพยากรธรรมชาติและสิ่งแวดล้อม<br>
-  </footer>
+  <!-- Win popup (แสดงเมื่อชนะ) -->
+  <div id="win-popup" class="popup" role="dialog" aria-modal="true" aria-labelledby="win-title" aria-describedby="win-text">
+    <div class="popup-box">
+      <div class="popup-body">
+        <h2 id="win-title">เยี่ยมมาก! จับครบทุกคู่แล้ว 🎉</h2>
+        <p id="win-text">สรุปผลการเล่น</p>
+        <div class="popup-actions">
+          <button id="btnRestart" class="primary">เล่นใหม่</button>
+          <button id="btnCloseWin">ปิด</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <!-- เสียง -->
+  <!-- เสียง (ออปชัน) -->
   <audio id="sfxFlip" src="sounds/flip.mp3" preload="auto"></audio>
   <audio id="sfxMatch" src="sounds/match.mp3" preload="auto"></audio>
   <audio id="sfxMiss" src="sounds/miss.mp3" preload="auto"></audio>
@@ -61,5 +71,3 @@
   <script src="script.js"></script>
 </body>
 </html>
-
-
