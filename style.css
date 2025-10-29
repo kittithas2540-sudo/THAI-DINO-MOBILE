@@ -6,7 +6,7 @@
 body{
   margin:0; font-family:system-ui,-apple-system,Segoe UI,Helvetica,Arial;
   background:linear-gradient(135deg,#0f172a 0%, #111827 60%, #0b1020 100%);
-  color:var(--text); height:100dvh; display:flex; flex-direction:column; overflow:hidden;
+  color:var(--text); height:100vh; display:flex; flex-direction:column; overflow:hidden;
   position:relative;
 }
 header{padding:6px; text-align:center;}
@@ -14,6 +14,7 @@ h1{margin:0 0 4px; font-size:1rem;}
 .sub{margin:0; color:var(--muted); font-size:.75rem;}
 .toolbar{margin:6px 0; display:flex; gap:4px; flex-wrap:wrap; justify-content:center;}
 .btn{background:var(--accent); border:none; color:#111; padding:4px 8px; border-radius:8px; font-weight:600; cursor:pointer; font-size:.8rem;}
+.btn.active{background:#fff; color:#000;}
 .panel{display:flex; gap:6px; flex-wrap:wrap; justify-content:center; color:var(--muted); font-size:.75rem;}
 .badge{background:#0b1324; border:1px solid #223; border-radius:6px; padding:4px 6px;}
 .badge strong{color:var(--accent);}
@@ -25,14 +26,10 @@ h1{margin:0 0 4px; font-size:1rem;}
 }
 .card{
   position:relative; perspective:1000px;
+  aspect-ratio: 4 / 3;
   cursor:pointer;
-  display:flex;
-  min-height:120px; /* ✅ กันการ์ดหาย */
 }
-.card-inner{
-  width:100%; height:100%;
-  transition:transform .5s; transform-style:preserve-3d;
-}
+.card-inner{position:absolute; inset:0; transition:transform .5s; transform-style:preserve-3d;}
 .card.flipped .card-inner{transform:rotateY(180deg);}
 .face{position:absolute; inset:0; backface-visibility:hidden; border-radius:10px; overflow:hidden;}
 .face.back{background:var(--card); display:flex; align-items:center; justify-content:center; font-size:2rem;}
@@ -41,55 +38,25 @@ h1{margin:0 0 4px; font-size:1rem;}
   background:var(--front);
   display:flex; flex-direction:column; justify-content:flex-start;
 }
-.thumb{
-  flex:1 1 auto;
-  display:flex; align-items:center; justify-content:center;
-  overflow:hidden;
-}
-.thumb img{
-  width:100%; height:auto;
-  object-fit:contain;
-  background-color:#000;
-}
-.caption{
-  padding:4px; font-size:.75rem; text-align:center;
-  background:rgba(0,0,0,.4); color:#fff;
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-}
+.thumb{flex:1; display:flex; align-items:center; justify-content:center; overflow:hidden;}
+.thumb img{width:100%; height:100%; object-fit: contain; background-color:#000;}
+.caption{padding:4px; font-size:.75rem; text-align:center; background:rgba(0,0,0,.4); color:#fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
 .matched .face.front{outline:3px solid var(--win);}
 
 .popup{position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,.6); visibility:hidden; opacity:0; transition:.3s;}
 .popup.active{visibility:visible; opacity:1;}
-.popup-card{background:#0b1324; border-radius:12px; max-width:90%; padding:12px; color:var(--text);}
+.popup-card{background:#0b1324; border-radius:12px; max-width:90%; padding:12px; color:var(--text); text-align:center;}
 #popup-img{display:block; max-width:100%; height:auto; margin:0 auto 8px; border-radius:8px;}
+#popup-summary{margin-top:8px; font-size:.8rem; color:var(--accent);}
 
-/* ✅ footer แบบลอย */
-footer{
-  position:absolute;
-  bottom:0; left:0; right:0;
-  background:rgba(11,19,36,0.8);
-  color:#94a3b8;
-  text-align:center;
-  padding:4px;
-  font-size:.65rem;
-  z-index:10;
-}
+#leaderboard{background:#0b1324; padding:10px; color:var(--text); font-size:.85rem;}
+#leaderboard h2{margin:0 0 6px; font-size:1rem; color:var(--accent);}
+#leaderboard-list{margin:0; padding-left:20px;}
+#leaderboard-list li{margin-bottom:4px;}
 
-/* ✅ มือถือแนวตั้ง: 3×4 + responsive */
+footer{position:absolute; bottom:0; left:0; right:0; background:rgba(11,19,36,0.8); color:#94a3b8; text-align:center; padding:4px; font-size:.65rem; z-index:10;}
+
 @media (max-width: 600px) {
-  .grid {
-    grid-template-columns: repeat(3, 1fr);
-    align-content:start;
-  }
-  .card {
-    aspect-ratio:auto;
-    min-height: clamp(90px, 22vw, 130px); /* ✅ ปรับอัตโนมัติ */
-  }
-  .thumb img {
-    max-height: clamp(40px, 12vw, 80px);
-  }
-  .caption {
-    font-size: clamp(.55rem, 2.5vw, .7rem);
-    padding: 2px;
-  }
+  .grid {grid-template-columns: repeat(3, 1fr); height: 100vh;}
+  .card {aspect-ratio: auto; height: calc(100vh / 4);}
 }
