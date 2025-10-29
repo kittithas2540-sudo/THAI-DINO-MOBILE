@@ -20,8 +20,10 @@ const popup=document.getElementById("popup");
 const popupTitle=document.getElementById("popup-title");
 const popupText=document.getElementById("popup-text");
 const popupImg=document.getElementById("popup-img");
+const popupSummary=document.getElementById("popup-summary");
 const btnClose=document.getElementById("btnClose");
 const btnRestart=document.getElementById("btnRestart");
+const btnRestartPopup=document.getElementById("btnRestartPopup");
 
 // เสียง
 const sfxFlip=document.getElementById("sfxFlip");
@@ -50,7 +52,7 @@ function formatTime(ms){
   return `${mm}:${ss}`;
 }
 function startTimer(){
-  if(state.timer) return; // กันไม่ให้ซ้อน
+  if(state.timer) return;
   state.startAt=Date.now() - (state.elapsed||0);
   state.timer=setInterval(()=>{
     state.elapsed = Date.now()-state.startAt;
@@ -75,7 +77,7 @@ function render(){
 
     const back=document.createElement("div");
     back.className="face back";
-    back.textContent="🦖"; // ด้านหลังการ์ด
+    back.textContent="🦖";
 
     const front=document.createElement("div");
     front.className="face front";
@@ -118,12 +120,20 @@ function onFlip(el,card){
       B.el.classList.add("matched");
       state.pairs++;
       pairsEl.textContent=`${state.pairs}/6`;
-      showPopup(A.card);
+      showPopup(A.card,false);
       state.flipped=[];
       state.locked=false;
       if(state.pairs===6){
         stopTimer();
-        setTimeout(()=>{ sfxWin.play(); alert("เยี่ยมมาก! คุณจับคู่ครบแล้ว 🎉"); },500);
+        setTimeout(()=>{
+          sfxWin.play();
+          const duration=Math.floor(state.elapsed/1000);
+          popupTitle.textContent="คุณชนะแล้ว!";
+          popupText.textContent="คุณจับคู่ครบทั้ง 6 คู่";
+          popupImg.src="";
+          popupSummary.textContent=`ใช้เวลา ${duration} วินาที และเปิดการ์ดไป ${state.flips} ครั้ง`;
+          popup.classList.add("active");
+        },500);
       }
     }else{
       // จับคู่ผิด
@@ -139,17 +149,23 @@ function onFlip(el,card){
 }
 
 // ป๊อปอัพ
-function showPopup(card){
+function showPopup(card,isWin){
   popupTitle.textContent=card.nameTH;
   popupText.textContent=card.info;
   popupImg.src=card.img;
   popupImg.alt=card.nameTH;
+  popupSummary.textContent="";
   popup.classList.add("active");
-  stopTimer(); // ✅ หยุดเวลาเมื่อป๊อปอัพเด้ง
+  stopTimer();
 }
 btnClose.addEventListener("click",()=>{
   popup.classList.remove("active");
-  startTimer(); // ✅ เริ่มเวลาใหม่เมื่อปิดป๊อปอัพ
+  if(state.pairs<6) startTimer();
+});
+btnRestart.addEventListener("click",restart);
+btnRestartPopup.addEventListener("click",()=>{
+  popup.classList.remove("active");
+  restart();
 });
 
 // เริ่มใหม่
@@ -171,7 +187,6 @@ function restart(){
   render();
   startTimer();
 }
-btnRestart.addEventListener("click",restart);
 
 // เริ่มเกมครั้งแรก
 restart();
