@@ -27,19 +27,15 @@ h1{margin:0 0 4px; font-size:1rem;}
 }
 .card{
   position:relative; perspective:1000px;
-  aspect-ratio:3/4; /* ✅ การ์ดเล็กลง */
+  aspect-ratio:3/4;
   cursor:pointer;
-  max-height:140px; /* ✅ จำกัดความสูง */
+  max-height:140px;
 }
 .card-inner{position:absolute; inset:0; transition:transform .5s; transform-style:preserve-3d;}
 .card.flipped .card-inner{transform:rotateY(180deg);}
 .face{position:absolute; inset:0; backface-visibility:hidden; border-radius:10px; overflow:hidden;}
 .face.back{background:var(--card); display:flex; align-items:center; justify-content:center; font-size:2rem;}
-.face.front{
-  transform:rotateY(180deg);
-  background:var(--front);
-  display:flex; flex-direction:column; justify-content:flex-start;
-}
+.face.front{transform:rotateY(180deg); background:var(--front); display:flex; flex-direction:column; justify-content:flex-start;}
 .thumb{flex:1; display:flex; align-items:center; justify-content:center; overflow:hidden;}
 .thumb img{width:100%; height:100%; object-fit: contain; background-color:#000;}
 .caption{padding:4px; font-size:.7rem; text-align:center; background:rgba(0,0,0,.4); color:#fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
@@ -51,19 +47,23 @@ h1{margin:0 0 4px; font-size:1rem;}
 #popup-img{display:block; max-width:100%; height:auto; margin:0 auto 8px; border-radius:8px;}
 #popup-summary{margin-top:8px; font-size:.8rem; color:var(--accent);}
 
-#leaderboard{background:#0b1324; padding:10px; color:var(--text); font-size:.85rem;}
-#leaderboard h2{margin:0 0 6px; font-size:1rem; color:var(--accent);}
-#leaderboard-list{margin:0; padding-left:20px;}
-#leaderboard-list li{margin-bottom:4px;}
+/* ✅ Leaderboard popup */
+#leaderboard-popup .popup-card{
+  width:90%;
+  max-width:400px;
+  max-height:80vh;
+  overflow-y:auto;
+}
+#leaderboard-list{
+  margin:0;
+  padding-left:20px;
+  max-height:60vh;
+  overflow-y:auto;
+}
 
 footer{position:absolute; bottom:0; left:0; right:0; background:rgba(11,19,36,0.8); color:#94a3b8; text-align:center; padding:4px; font-size:.65rem; z-index:10;}
 
-/* ✅ มือถือก็ยังคง 4×3 */
 @media (max-width: 600px) {
-  .grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-  .card {
-    max-height: 100px; /* การ์ดเล็กลงอีกสำหรับจอเล็ก */
-  }
+  .grid {grid-template-columns: repeat(4, 1fr);}
+  .card {max-height: 100px;}
 }
