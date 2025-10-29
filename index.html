@@ -23,7 +23,7 @@
 
   <main class="grid" id="grid"></main>
 
-  <!-- ป๊อปอัพ -->
+  <!-- Popup ข้อมูลไดโนเสาร์ -->
   <div class="popup" id="popup">
     <div class="popup-card">
       <img id="popup-img" alt="" />
@@ -31,19 +31,22 @@
       <p id="popup-text"></p>
       <div id="popup-summary"></div>
       <button class="btn" id="btnClose">ปิด</button>
-      <button class="btn" id="btnRestartPopup">เล่นใหม่</button>
     </div>
   </div>
 
-  <!-- Leaderboard -->
-  <section id="leaderboard">
-    <h2>🏆 Leaderboard</h2>
-    <div class="toolbar">
-      <button id="sortTime" class="btn active">เรียงตามเวลา</button>
-      <button id="sortFlips" class="btn">เรียงตามจำนวนครั้ง</button>
+  <!-- Popup Leaderboard -->
+  <div class="popup" id="leaderboard-popup">
+    <div class="popup-card">
+      <h2>🏆 Leaderboard</h2>
+      <div class="toolbar">
+        <button id="sortTime" class="btn active">เรียงตามเวลา</button>
+        <button id="sortFlips" class="btn">เรียงตามจำนวนครั้ง</button>
+      </div>
+      <ol id="leaderboard-list"></ol>
+      <button class="btn" id="btnRestartPopup">เล่นใหม่</button>
+      <button class="btn" id="btnCloseLeaderboard">ปิด</button>
     </div>
-    <ol id="leaderboard-list"></ol>
-  </section>
+  </div>
 
   <footer>
     ที่มา <strong>กรมทรัพยากรธรณี</strong> กระทรวงทรัพยากรธรรมชาติและสิ่งแวดล้อม<br>
@@ -58,4 +61,3 @@
   <script src="script.js"></script>
 </body>
 </html>
-
